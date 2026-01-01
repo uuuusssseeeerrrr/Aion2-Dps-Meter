@@ -1,8 +1,14 @@
 package com.tbread
 
+import org.pcap4j.core.BpfProgram
+import org.pcap4j.core.PacketListener
 import org.pcap4j.core.PcapNativeException;
 import org.pcap4j.core.PcapNetworkInterface
 import org.pcap4j.core.Pcaps
+import org.pcap4j.packet.Packet
+import org.pcap4j.packet.TcpPacket
+import org.pcap4j.util.ByteArrays
+import java.util.*
 import kotlin.system.exitProcess
 
 object PcapHandler {
@@ -31,17 +37,44 @@ object PcapHandler {
         }
     }
 
+    private val MAGIC_PACKET = byteArrayOf(0x06.toByte(),0x00.toByte(),0x36.toByte())
+
 
     fun printDevices() {
         for ((i, device) in devices.withIndex()) {
-            println(i.toString() + " - " + device.description)
+            println(i.toString() + " - " + device.description + " : " + device.addresses)
         }
     }
 
     fun getDeviceSize(): Int {
         return devices.size
     }
-    
+
+    fun pcapStart() {
+        val filter = "src host $SERVER_IP and port $SERVER_PORT"
+        PCAP_HANDLE.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE)
+        println("캡쳐시작 필터구문 : $filter")
+
+        val listener = PacketListener { packet ->
+            if (packet.contains(TcpPacket::class.java)) {
+                val tcpPacket = packet.get(TcpPacket::class.java)
+                val payload = tcpPacket.payload
+                if (payload != null) {
+                    val data = payload.rawData
+                    if (data.isNotEmpty()) {
+                        println(ByteArrays.toHexString(data, " "))
+                    }
+                }
+            }
+        }
+        try {
+            PCAP_HANDLE.use { handle ->
+                handle.loop(-1, listener)
+            }
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
 
 
 }
