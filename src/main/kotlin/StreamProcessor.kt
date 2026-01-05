@@ -2,7 +2,7 @@ package com.tbread
 
 import java.util.*
 
-class StreamProcessor {
+class StreamProcessor(private val dataStorage: DataStorage) {
 
     data class VarIntOutput(val value: Int, val length: Int)
 
@@ -64,7 +64,9 @@ class StreamProcessor {
         if (nicknameLength < 0 || nicknameLength > 72) return
         if (nicknameLength + offset > packet.size) return
 
-        val nicknamePacket = packet.copyOfRange(offset+1,offset+nicknameLength+1)
+        val np = packet.copyOfRange(offset+1,offset+nicknameLength+1)
+        
+        dataStorage.appendNickname(playerInfo.value,String(np,Charsets.UTF_8))
 
 
     }
@@ -152,9 +154,11 @@ class StreamProcessor {
             if (offset>=packet.size) return
         }
 
-        println("피격자: ${pdp.getTargetId()} 공격자: ${pdp.getActorId()} 스위치용변수: ${pdp.getSwitchVariable()} 스킬: ${pdp.getSkillCode1()} 스킬2: ${pdp.getSkillCode2()}" +
-                " 플래그: ${pdp.getFlag()} 타입: ${pdp.getType()}" +
-                " unknown : ${pdp.getUnknown()} 데미지: ${pdp.getDamage()} loop: ${pdp.getLoop()}")
+//        println("피격자: ${pdp.getTargetId()} 공격자: ${pdp.getActorId()} 스위치용변수: ${pdp.getSwitchVariable()} 스킬: ${pdp.getSkillCode1()} 스킬2: ${pdp.getSkillCode2()}" +
+//                " 플래그: ${pdp.getFlag()} 타입: ${pdp.getType()}" +
+//                " unknown : ${pdp.getUnknown()} 데미지: ${pdp.getDamage()} loop: ${pdp.getLoop()}")
+
+        dataStorage.appendDamage(pdp)
 
     }
 
@@ -164,7 +168,7 @@ class StreamProcessor {
         return bytes.joinToString(" ") { "%02X".format(it) }
     }
 
-    fun readVarInt(bytes: ByteArray, offset: Int = 0): VarIntOutput {
+    private fun readVarInt(bytes: ByteArray, offset: Int = 0): VarIntOutput {
         //구글 Protocol Buffers 라이브러리에 이미 있나? 코드 효율성에 차이있어보이면 나중에 바꾸는게 나을듯?
         var value = 0
         var shift = 0

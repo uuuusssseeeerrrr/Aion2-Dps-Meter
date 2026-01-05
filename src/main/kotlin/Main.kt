@@ -28,7 +28,8 @@ fun main() = runBlocking {
     val channel = Channel<ByteArray>(Channel.UNLIMITED)
     val config = PcapCapturerConfig.loadFromProperties()
 
-    val processor = StreamProcessor()
+    val dataStorage = DataStorage()
+    val processor = StreamProcessor(dataStorage)
     val assembler = StreamAssembler(processor)
     val capturer = PcapCapturer(config, channel)
 
