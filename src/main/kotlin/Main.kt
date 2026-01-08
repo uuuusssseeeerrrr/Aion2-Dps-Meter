@@ -1,21 +1,38 @@
 package com.tbread
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.SwingPanel
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import com.tbread.config.PcapCapturerConfig
+import javafx.application.Application
+import javafx.application.Platform
+import javafx.embed.swing.JFXPanel
+import javafx.scene.Scene
+import javafx.scene.paint.Color
+import javafx.scene.web.WebEngine
+import javafx.scene.web.WebView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import java.io.File
+import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 fun main() = runBlocking {
-    Thread.setDefaultUncaughtExceptionHandler{
-        t,e->
+    Thread.setDefaultUncaughtExceptionHandler { t, e ->
         println("thread dead ${t.name}")
         e.printStackTrace()
     }
@@ -39,10 +56,6 @@ fun main() = runBlocking {
     val assembler = StreamAssembler(processor)
     val capturer = PcapCapturer(config, channel)
 
-//    Runtime.getRuntime().addShutdownHook(Thread {
-//        dataStorage.printDamageByTarget()
-//    })
-
     launch(Dispatchers.Default) {
         for (chunk in channel) {
             assembler.processChunk(chunk)
@@ -53,26 +66,7 @@ fun main() = runBlocking {
         capturer.start()
     }
 
-    runCompose()
+    Application.launch(BrowserApp::class.java)
 }
 
-@Composable
-@Preview
-fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
 
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
-        }
-    }
-}
-
-fun runCompose() = application {
-    System.setProperty("skiko.renderApi", "SOFTWARE")
-    Window(onCloseRequest = ::exitApplication) {
-        App()
-    }
-}
