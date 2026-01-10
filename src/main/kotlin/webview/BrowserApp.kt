@@ -1,5 +1,6 @@
 package com.tbread.webview
 
+import com.tbread.DpsCalculator
 import javafx.application.Application
 import javafx.concurrent.Worker
 import javafx.scene.Scene
@@ -9,7 +10,7 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import netscape.javascript.JSObject
 
-class BrowserApp : Application() {
+class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     class JSBridge(private val stage: Stage) {
         fun moveWindow(x: Double, y: Double) {
