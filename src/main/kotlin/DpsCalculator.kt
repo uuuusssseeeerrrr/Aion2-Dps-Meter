@@ -55,7 +55,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 //그냥 아래에서 재계산하는거 여기서 해놓고 아래에선 그냥 골라서 주는게 맞는거같은데 나중에 고민할필요있을듯
             }
         }
-        decideTarget()
+        val targetData = decideTarget()
         val battleTime = targetInfoMap[currentTarget]?.parseBattleTime() ?: 0
         val dpsData = DpsData()
         val nicknameData = dataStorage.getNickname()
@@ -73,11 +73,19 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         return dpsData
     }
 
-    private fun decideTarget(): Int {
+    private fun decideTarget(): Pair<Int,String?> {
         val target: Int = targetInfoMap.maxByOrNull { it.value.damagedAmount() }?.key ?: 0
+        var targetName:String? = null
         currentTarget = target
         //데미지 누계말고도 건수누적방식도 추가하는게 좋을지도? 지금방식은 정복같은데선 타겟변경에 너무 오랜시간이듬
-        return target
+        if (dataStorage.getMobData().containsKey(target)) {
+            val mobCode = dataStorage.getMobData()[target]
+            if (dataStorage.getMobCodeData().containsKey(mobCode)) {
+                targetName = dataStorage.getMobCodeData()[mobCode]
+            }
+        }
+
+        return Pair(target, targetName)
     }
 
     private fun inferOriginalSkillCode(skillCode: Int): Int? {

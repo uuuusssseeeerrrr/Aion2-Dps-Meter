@@ -86,7 +86,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     }
 
     fun getDpsData(): String {
-        return Json.encodeToString(dpsData.map)
+        return Json.encodeToString(dpsData)
     }
 
     fun isDebuggingMode(): Boolean {
