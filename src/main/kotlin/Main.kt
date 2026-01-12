@@ -34,6 +34,9 @@ fun main() = runBlocking {
     val config = PcapCapturerConfig.loadFromProperties()
 
     val dataStorage = DataStorage()
+    dataStorage.appendMobCode(8775000,"번견 쿠하푸")
+    dataStorage.appendMobCode(77805,"두두카 일꾼")
+    //임시로 여기서 추가
     val processor = StreamProcessor(dataStorage)
     val assembler = StreamAssembler(processor)
     val capturer = PcapCapturer(config, channel)

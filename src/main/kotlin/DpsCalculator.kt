@@ -55,9 +55,10 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 //그냥 아래에서 재계산하는거 여기서 해놓고 아래에선 그냥 골라서 주는게 맞는거같은데 나중에 고민할필요있을듯
             }
         }
-        val targetData = decideTarget()
-        val battleTime = targetInfoMap[currentTarget]?.parseBattleTime() ?: 0
         val dpsData = DpsData()
+        val targetData = decideTarget()
+        dpsData.targetName = targetData.second
+        val battleTime = targetInfoMap[currentTarget]?.parseBattleTime() ?: 0
         val nicknameData = dataStorage.getNickname()
         if (battleTime == 0L) {
             return dpsData
