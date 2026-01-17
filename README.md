@@ -95,3 +95,6 @@ cd Aion2-Dps-Meter
 ## 다운로드
 
 ### [이동](https://github.com/TK-open-public/Aion2-Dps-Meter/releases)
+
+
+해당 프로그램을 사용함으로써 생기는 책임은 사용자 본인에게 있습니다.
