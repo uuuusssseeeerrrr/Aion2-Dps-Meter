@@ -8,6 +8,11 @@
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/TK-open-public/Aion2-Dps-Meter)](https://github.com/TK-open-public/Aion2-Dps-Meter/pulls)
 
 
+해당 프로젝트는 운영측의 요청, 패킷암호화등의 조치, 공식적인 사용중단 언급이 있다면 중지 및 비공개상태로 전환됩니다.
+
+
+
+
 ## Table of Contents
 
 - [빌드하기](#빌드하기)
@@ -82,6 +87,9 @@ cd Aion2-Dps-Meter
 - 미터기엔 혼자 뜨는데 기여도가 100%가 아니에요
   - 미터기가 캐릭터명 수집에 실패하여 뜨지않고있는 기여자가 있을수있습니다.
   - 허수아비나 자힐이있는 일부 몬스터의 경우 힐을 데미지기여로 판단하고있는 버그가있습니다.(수정예정)
+
+- 잘 되다가 어느순간부터 안돼요
+  - 아직 고치지못한 고질적인 문제입니다. 추후 원인을 찾는다면 수정예정입니다.
 
 
 ## 다운로드
