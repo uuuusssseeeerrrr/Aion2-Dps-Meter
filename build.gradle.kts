@@ -47,12 +47,6 @@ compose.desktop {
     }
 }
 
-tasks.withType<JavaExec> {
-    systemProperty("file.encoding", "UTF-8")
-    systemProperty("console.encoding", "UTF-8")
-    jvmArgs("-Dfile.encoding=UTF-8")
-}
-
 javafx {
     version = "21.0.9:win"
     modules(

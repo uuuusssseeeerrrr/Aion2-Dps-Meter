@@ -9,6 +9,7 @@ import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.concurrent.Worker
 import javafx.scene.Scene
+import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.web.WebErrorEvent
 import javafx.scene.web.WebView
@@ -111,13 +112,17 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         stage.isAlwaysOnTop = true
         stage.title = "Aion2 Dps Overlay"
 
+        val iconStream = javaClass.getResourceAsStream("/icon/icon.png")
+        if (iconStream != null) {
+            stage.icons.add(Image(iconStream))
+        }
+
         val primaryScreen = Screen.getPrimary()
         val bounds = primaryScreen.visualBounds
 
         stage.x = bounds.minX + bounds.width * 0.7
         stage.y = bounds.minY + bounds.height * 0.05
 
-        logger.info { "Screen resolution: ${bounds.width}x${bounds.height}" }
 
         stage.show()
         Timeline(KeyFrame(Duration.millis(500.0), {
