@@ -522,7 +522,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 data.damageContribution = data.amount / totalDamage * 100
             }
         }
-
+        dpsData.battleTime = battleTime
         return dpsData
     }
 
