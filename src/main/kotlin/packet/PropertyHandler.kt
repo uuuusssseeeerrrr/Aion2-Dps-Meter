@@ -6,7 +6,7 @@ import java.util.*
 
 object PropertyHandler {
     private val props = Properties()
-    private const val PROPERTIES_FILE_NAME = "settings.properties"
+    private const val PROPERTIES_FILE_NAME = "/settings.properties"
     private val logger = KotlinLogging.logger {}
 
     init {

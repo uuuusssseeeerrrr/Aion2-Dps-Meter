@@ -20,6 +20,10 @@ window.HeaderArea = {
       emit('collapseClick');
     }
 
+    const settingClick = () => {
+      emit('update:isSetting', true);
+    }
+
     onMounted(() => {
       lucide.createIcons();
     });
@@ -33,6 +37,7 @@ window.HeaderArea = {
     return {
       resetClick,
       collapseClick,
+      settingClick,
     };
   },
   template: `
@@ -44,8 +49,9 @@ window.HeaderArea = {
             <span class="bossName">{{ targetName || "DPS METER" }}</span>
           </div>
           <div class="headerBtns">
+            <div class="headerBtn settingsBtn" @click="settingClick"><i data-lucide="settings"></i></div>
             <div class="headerBtn resetBtn" @click="resetClick"><i data-lucide="rotate-ccw"></i></div>
-            <div class="headerBtn collapseBtn" v-if="!isCollapse" @click="collapseClick">
+            <div class="headerBtn collapseBtn" v-if="isCollapse" @click="collapseClick">
               <i class="collapseIcon" 
                 data-lucide="arrow-up-wide-narrow"></i>
             </div>

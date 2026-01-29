@@ -42,5 +42,5 @@ function buildRowsFromMapObject(mapObj) {
     });
   }
 
-  return rows.sort((a, b) => Number(b.damageContribution || 0) - Number(a.damageContribution || 0));
+  return rows;
 }

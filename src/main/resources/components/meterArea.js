@@ -9,6 +9,7 @@ window.MeterArea = {
   setup(props, {emit}) {
     const {computed} = Vue;
     const dpsFormatter = new Intl.NumberFormat("ko-KR");
+
     const topDps = computed(() => {
       return props.rows.reduce((max, row) => {
         return Math.max(max, Number(row?.dps) || 0);

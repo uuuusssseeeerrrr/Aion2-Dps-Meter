@@ -25,10 +25,14 @@ window.DetailArea = {
       required: true
     }
   },
-  emits: ['closeClick',],
+  emits: ['update:isDetailOpen'],
   setup(props, {emit}) {
     const {computed} = Vue;
     const numberFormatter = new Intl.NumberFormat('ko-KR');
+
+    const closeClick = () => {
+      emit('update:isDetailOpen', false);
+    }
 
     const battleDetail = computed(() => {
       if (!props.id || !window.dpsData?.getBattleDetail) {
@@ -51,10 +55,11 @@ window.DetailArea = {
           }
 
           const nameRaw = typeof value.skillName === "string" ? value.skillName.trim() : "";
+          const baseName = nameRaw ? nameRaw : `스킬 ${code}`;
 
           skills.push({
             code,
-            name: nameRaw ? nameRaw : `스킬 ${code}`,
+            name: baseName,
             time: Math.trunc(Number(value.times)) || 0,
             crit: Math.trunc(Number(value.critTimes)) || 0,
             parry : Number(value.parryTimes) || 0,
@@ -63,6 +68,15 @@ window.DetailArea = {
             double : Number(value.doubleTimes) || 0,
             dmg,
           });
+
+          if(Number(String(value.dotDamageAmount ?? 0).replace(/,/g, "")) > 0) {
+            skills.push({
+              code: `${code}-dot`, // 유니크키
+              name: `${baseName} - 지속피해`,
+              time: value.dotTimes,
+              dmg: value.dotDamageAmount,
+            });
+          }
         }
       }
 
@@ -72,12 +86,15 @@ window.DetailArea = {
     const stats = computed(() => {
       return skillList.value.reduce((acc, skill) => {
         acc.totalDmg += skill.dmg || 0;
-        acc.totalCrit += skill.crit || 0;
         acc.totalTimes += skill.time || 0;
-        acc.totalParry += skill.parry || 0;
-        acc.totalBack += skill.backTime || 0;
-        acc.totalPerfect += skill.perfect || 0;
-        acc.totalDouble += skill.double || 0;
+
+        if(!skill.code.endsWith("-dot")) {
+          acc.totalCrit += skill.crit || 0;
+          acc.totalParry += skill.parry || 0;
+          acc.totalBack += skill.backTime || 0;
+          acc.totalPerfect += skill.perfect || 0;
+          acc.totalDouble += skill.double || 0;
+        }
 
         return acc;
       }, {
@@ -109,10 +126,6 @@ window.DetailArea = {
         return `scaleX(${ratio})`;
       };
     });
-
-    const closeClick = () => {
-      emit('closeClick');
-    }
 
     const getCritRate = (skill) => {
       const time = Number(skill.time);

@@ -1,19 +1,22 @@
 package com.tbread.webview
 
 import com.tbread.DpsCalculator
+import com.tbread.aion2meter4j.BuildConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
 import javafx.application.HostServices
 import javafx.application.Platform
+import javafx.scene.web.WebEngine
 import javafx.stage.Stage
 import kotlin.system.exitProcess
 
 class JSBridge(
     private val stage: Stage,
     private val dpsCalculator: DpsCalculator,
-    private val hostServices: HostServices
+    private val hostServices: HostServices,
+    engine: WebEngine
 ) {
     private val logger = KotlinLogging.logger {}
-    private val version = "0.2.4"
+    private val hookKeyEvent = HookKeyEvent(engine)
 
     fun moveWindow(x: Double, y: Double) {
         stage.x = x
@@ -38,14 +41,23 @@ class JSBridge(
     }
 
     fun printLog(message: String) {
-        logger.debug { "[JS LOG] $message" }
+        logger.info { message }
     }
 
     fun getCurrentVersion(): String {
-        return version
+        return BuildConfig.APP_VERSION
     }
 
     fun getLatestVersion(): String {
-        return GitReleaseParser.currentVersion.ifEmpty { version }
+        return GitReleaseParser.currentVersion.ifEmpty { BuildConfig.APP_VERSION }
+    }
+
+    fun setHotkey(modifiers: Int, keyCode: Int) {
+        logger.info { "setHotkey called mods=$modifiers vk=$keyCode" }
+        hookKeyEvent.setHotkey(modifiers, keyCode)
+    }
+
+    fun getCurrentHotKey(): String {
+        return hookKeyEvent.getCurrentHotKey()
     }
 }

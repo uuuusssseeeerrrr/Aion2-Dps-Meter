@@ -1,10 +1,11 @@
 window.UpdateArea = {
   setup() {
-    const {computed} = Vue;
+    const {watch} = Vue;
     const currentVersion = ref("");
     const LatestVersion = ref("");
+    const updateExists = ref(false);
 
-    const updateExists = computed(() => {
+    const checkUpdateExists = () => {
       const curParts = currentVersion.value.split('.').map(n => parseInt(n) || 0);
       const newParts = LatestVersion.value.split('.').map(n => parseInt(n) || 0);
 
@@ -19,10 +20,19 @@ window.UpdateArea = {
       }
 
       return false;
-    });
+    };
 
-    const updateBtnClick = () => {
-      window.open('https://github.com/TK-open-public/Aion2-Dps-Meter/releases', '_blank');
+    watch([currentVersion, LatestVersion], () => {
+      updateExists.value = checkUpdateExists();
+    }, { immediate: true });
+
+    const update = () => {
+      window.javaBridge?.openBrowser("https://github.com/TK-open-public/Aion2-Dps-Meter/releases");
+      window.javaBridge?.exitApp();
+    };
+
+    const cancel = () => {
+      updateExists.value = false;
     };
 
     window.addEventListener('javaReady', () => {
@@ -34,7 +44,8 @@ window.UpdateArea = {
       currentVersion,
       LatestVersion,
       updateExists,
-      updateBtnClick
+      update,
+      cancel
     };
   },
   template: `
@@ -56,7 +67,8 @@ window.UpdateArea = {
               </div>
             </div>
             <div class="updateModalActions">
-              <button class="updateModalBtn primary" @click="updateBtnClick">다운로드</button>
+              <button class="updateModalBtn primary" @click="update">다운로드</button>
+              <button class="updateModalBtn secondary" @click="cancel">취소</button>
             </div>
           </div>
         </div>

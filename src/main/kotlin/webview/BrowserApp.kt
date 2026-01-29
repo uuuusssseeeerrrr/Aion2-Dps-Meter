@@ -36,7 +36,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         val engine = webView.engine
         engine.load(javaClass.getResource("/index.html")?.toExternalForm())
 
-        val bridge = JSBridge(stage, dpsCalculator, hostServices)
+        val bridge = JSBridge(stage, dpsCalculator, hostServices, engine)
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
             if (newState == Worker.State.SUCCEEDED) {
                 val window = engine.executeScript("window") as JSObject
@@ -88,10 +88,35 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
                             return false;
                         };
                       
+                        // Vue 에러 핸들러 등록을 위한 헬퍼 함수
+                        window.setupVueErrorHandler = function(app) {
+                            if (app && app.config) {
+                                app.config.errorHandler = function(err, instance, info) {
+                                    var errorMessage = 'VUE ERROR: ' + err.toString() + '\nInfo: ' + info;
+                                    if (err.stack) {
+                                        errorMessage += '\nStack: ' + err.stack;
+                                    }
+                                    if (window.javaBridge) {
+                                        window.javaBridge.printLog(errorMessage);
+                                    }
+                                    console.error('Vue Error:', err, info);
+                                };
+                                
+                                app.config.warnHandler = function(msg, instance, trace) {
+                                    var warnMessage = 'VUE WARNING: ' + msg + '\nTrace: ' + trace;
+                                    if (window.javaBridge) {
+                                        window.javaBridge.printLog(warnMessage);
+                                    }
+                                };
+                            }
+                        };
+                      
                         window.dispatchEvent(new CustomEvent('javaReady'));
                       })();
                     """.trimIndent()
                 )
+
+
             } else if (newState == Worker.State.FAILED) {
                 logger.error { "Failed to load web page: ${engine.loadWorker.exception}" }
             }
@@ -127,9 +152,12 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         val primaryScreen = Screen.getPrimary()
         val bounds = primaryScreen.visualBounds
 
-        stage.x = bounds.minX + bounds.width * 0.7
-        stage.y = bounds.minY + bounds.height * 0.05
-
+        when {
+            bounds.width > 2200 -> {
+                stage.x = bounds.minX + bounds.width * 0.705
+                stage.y = bounds.minY + bounds.height * 0.06
+            }
+        }
 
         stage.show()
         Timeline(KeyFrame(Duration.millis(500.0), {
