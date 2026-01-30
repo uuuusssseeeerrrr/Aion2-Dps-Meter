@@ -16,7 +16,7 @@ class JSBridge(
     engine: WebEngine
 ) {
     private val logger = KotlinLogging.logger {}
-    private val hookKeyEvent = HookKeyEvent(engine)
+    private val keyHookEvent = KeyHookEvent(engine)
 
     fun moveWindow(x: Double, y: Double) {
         stage.x = x
@@ -54,10 +54,10 @@ class JSBridge(
 
     fun setHotkey(modifiers: Int, keyCode: Int) {
         logger.info { "setHotkey called mods=$modifiers vk=$keyCode" }
-        hookKeyEvent.setHotkey(modifiers, keyCode)
+        keyHookEvent.setHotkey(modifiers, keyCode)
     }
 
     fun getCurrentHotKey(): String {
-        return hookKeyEvent.getCurrentHotKey()
+        return keyHookEvent.getCurrentHotKey()
     }
 }

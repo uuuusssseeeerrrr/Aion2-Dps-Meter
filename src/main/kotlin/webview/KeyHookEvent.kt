@@ -10,7 +10,7 @@ import javafx.scene.web.WebEngine
 import kotlinx.serialization.json.Json
 import java.io.File
 
-class HookKeyEvent(private val engine: WebEngine) {
+class KeyHookEvent(private val engine: WebEngine) {
     private val logger = KotlinLogging.logger {}
     private val hotkeyId = 1
     private val hotkeyTargetProcess = "Aion2.exe"
